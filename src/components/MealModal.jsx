@@ -12,7 +12,7 @@ const AREA_FLAG = {
   Tunisian: '🇹🇳', Turkish: '🇹🇷', Ukrainian: '🇺🇦', Vietnamese: '🇻🇳',
 }
 
-export default function MealModal({ meal, onClose }) {
+export default function MealModal({ meal, onClose, isFavorite, onToggleFavorite }) {
   const ingredients = parseIngredients(meal)
   const tags        = parseTags(meal)
   const flag        = AREA_FLAG[meal.strArea] || '🌍'
@@ -47,6 +47,17 @@ export default function MealModal({ meal, onClose }) {
             <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
+          </button>
+          <button
+            className={`mm__favorite${isFavorite ? ' active' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleFavorite?.()
+            }}
+            aria-label={isFavorite ? 'Remove favorite' : 'Add favorite'}
+            type="button"
+          >
+            {isFavorite ? '♥' : '♡'}
           </button>
           <div className="mm__hero-info">
             <h2 className="mm__title">{meal.strMeal}</h2>

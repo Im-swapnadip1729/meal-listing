@@ -19,7 +19,7 @@ const CAT_COLOR = {
   Breakfast: '#f59e0b', Goat: '#8b5cf6',
 }
 
-export default function MealCard({ meal, onSelect }) {
+export default function MealCard({ meal, onSelect, isFavorite, onToggleFavorite }) {
   const tags  = parseTags(meal)
   const flag  = AREA_FLAG[meal.strArea] || '🌍'
   const color = CAT_COLOR[meal.strCategory] || '#ff6b2b'
@@ -73,6 +73,17 @@ export default function MealCard({ meal, onSelect }) {
               <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.396 0 2.7.37 3.8 1.016A7.968 7.968 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.969 7.969 0 0014.5 4c-1.396 0-2.7.37-3.8 1.016A7.968 7.968 0 009 4.804z"/>
             </svg>
             See Recipe
+          </button>
+          <button
+            className={`mc__favorite${isFavorite ? ' active' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleFavorite?.()
+            }}
+            aria-label={isFavorite ? 'Remove favorite' : 'Add favorite'}
+            type="button"
+          >
+            {isFavorite ? '♥' : '♡'}
           </button>
           {meal.strYoutube && (
             <a

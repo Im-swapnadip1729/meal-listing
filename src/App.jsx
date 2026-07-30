@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useMeals } from './hooks/useMeals'
 import Navbar from './components/Navbar'
 import HeroStrip from './components/HeroStrip'
@@ -13,6 +13,14 @@ export default function App() {
   const [search, setSearch]     = useState('')
   const [category, setCategory] = useState('All')
   const [selected, setSelected] = useState(null)
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('meal-favorites') || '[]')
+      return Array.isArray(saved) ? saved : []
+    } catch {
+      return []
+    }
+  })
 
   const { meals, loading, error, totalPages, totalItems, retry } = useMeals(page, 12)
 
@@ -33,6 +41,26 @@ export default function App() {
     })
   }, [meals, search, category])
 
+  const featuredMeal = useMemo(() => {
+    if (!meals.length) return null
+    const todayIndex = (new Date().getDate() + page - 1) % meals.length
+    return meals[todayIndex]
+  }, [meals, page])
+
+  useEffect(() => {
+    localStorage.setItem('meal-favorites', JSON.stringify(favorites))
+  }, [favorites])
+
+  const toggleFavorite = (meal) => {
+    setFavorites(current => {
+      const exists = current.some(item => item.idMeal === meal.idMeal)
+      if (exists) {
+        return current.filter(item => item.idMeal !== meal.idMeal)
+      }
+      return [...current, meal]
+    })
+  }
+
   const handlePageChange = (p) => {
     setPage(p)
     setSearch('')
@@ -43,7 +71,13 @@ export default function App() {
   return (
     <div className="app">
       <Navbar />
-      <HeroStrip total={totalItems} />
+      <HeroStrip
+        total={totalItems}
+        featuredMeal={featuredMeal}
+        onSelect={() => featuredMeal && setSelected(featuredMeal)}
+        isFavorite={!!featuredMeal && favorites.some(item => item.idMeal === featuredMeal.idMeal)}
+        onToggleFavorite={() => featuredMeal && toggleFavorite(featuredMeal)}
+      />
 
       <main className="app__main">
         <Controls
@@ -62,6 +96,8 @@ export default function App() {
           error={error}
           onSelect={setSelected}
           onRetry={retry}
+          favorites={favorites}
+          onToggleFavorite={toggleFavorite}
         />
 
         {!loading && !error && (
@@ -70,7 +106,12 @@ export default function App() {
       </main>
 
       {selected && (
-        <MealModal meal={selected} onClose={() => setSelected(null)} />
+        <MealModal
+          meal={selected}
+          onClose={() => setSelected(null)}
+          isFavorite={favorites.some(item => item.idMeal === selected.idMeal)}
+          onToggleFavorite={() => toggleFavorite(selected)}
+        />
       )}
     </div>
   )

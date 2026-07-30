@@ -2,7 +2,7 @@ import MealCard from './MealCard'
 import SkeletonCard from './SkeletonCard'
 import './MealGrid.css'
 
-export default function MealGrid({ meals, loading, error, onSelect, onRetry }) {
+export default function MealGrid({ meals, loading, error, onSelect, onRetry, favorites, onToggleFavorite }) {
   if (error) {
     return (
       <div className="mg__state">
@@ -31,6 +31,8 @@ export default function MealGrid({ meals, loading, error, onSelect, onRetry }) {
               key={m.idMeal}
               meal={m}
               onSelect={onSelect}
+              isFavorite={favorites?.some(item => item.idMeal === m.idMeal) || false}
+              onToggleFavorite={() => onToggleFavorite?.(m)}
               style={{ animationDelay: `${i * 0.04}s` }}
             />
           ))

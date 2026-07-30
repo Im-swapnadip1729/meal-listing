@@ -166,6 +166,31 @@
 
 .mc__btn:hover { opacity: 0.75; }
 
+.mc__favorite {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mc__favorite:hover {
+  transform: scale(1.05);
+  color: #ff4d6d;
+}
+
+.mc__favorite.active {
+  background: #fff0f4;
+  color: #ff4d6d;
+  border-color: #ffb3c2;
+}
+
 .mc__yt {
   width: 30px;
   height: 30px;
